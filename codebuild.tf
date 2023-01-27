@@ -59,6 +59,16 @@ resource "aws_codebuild_project" "kf-codebuild" {
       name  = "DBHOST"
       value = aws_rds_cluster.kf-aurora-cluster-postgre.endpoint
     }
+
+    environment_variable {
+      name  = "DOCKERHUB_USER"
+      value = var.dockerhub_username
+    }
+
+    environment_variable {
+      name  = "DOCKERHUB_PASS"
+      value = var.dockerhub_pass
+    }
   }
 
   source {
