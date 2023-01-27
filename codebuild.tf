@@ -49,6 +49,16 @@ resource "aws_codebuild_project" "kf-codebuild" {
       name  = "MEMORY_RESV"
       value = var.memory_reserv
     }
+
+    environment_variable {
+      name  = "DBNAME"
+      value = aws_rds_cluster.kf-aurora-cluster-postgre.database_name
+    }
+
+    environment_variable {
+      name  = "DBHOST"
+      value = aws_rds_cluster.kf-aurora-cluster-postgre.endpoint
+    }
   }
 
   source {
@@ -59,4 +69,8 @@ resource "aws_codebuild_project" "kf-codebuild" {
     Name        = var.service_name
     Environment = "${var.service_name}-env"
   }
+
+  depends_on = [
+    aws_rds_cluster.kf-aurora-cluster-postgre
+  ]
 }
