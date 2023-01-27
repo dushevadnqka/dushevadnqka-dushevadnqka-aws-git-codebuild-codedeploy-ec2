@@ -51,3 +51,11 @@ variable "docker_image_tag" {
 variable "git_repo" {
   description = "the name of the git repo"
 }
+
+variable "dockerhub_username" {
+  description = "Username for Dockerhub"
+}
+
+variable "dockerhub_pass" {
+  description = "Password for Dockerhub"
+}

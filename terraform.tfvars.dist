@@ -1,13 +1,17 @@
-region            = "us-west-2"
-github_token      = ""
-ec2_instance_type = "t3.micro"
-rds_instance_type = "db.t3.medium" //min for postgresql
-asg_size          = "1"
-git_repo          = ""
-git_owner         = ""
-git_branch        = "master"
-service_name      = "my-project"
-aws_account_id    = ""
-container_port    = 8080
-memory_reserv     = 100
-docker_image_tag  = "latest"
+region             = "us-west-2"
+github_token       = ""
+ec2_instance_type  = "t3.micro"
+rds_instance_type  = "db.t3.medium" //min for postgresql
+asg_size           = "1"
+git_repo           = ""
+git_owner          = ""
+git_branch         = "master"
+service_name       = "my-project"
+aws_account_id     = ""
+container_port     = 8080
+memory_reserv      = 100
+docker_image_tag   = "latest"
+
+# Not required: it would be needed if your build hit the limit for pulling from Dockerhub
+dockerhub_username = ""
+dockerhub_pass     = ""
