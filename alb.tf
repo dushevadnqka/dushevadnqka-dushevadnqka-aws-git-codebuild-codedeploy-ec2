@@ -21,9 +21,10 @@ resource "aws_lb_target_group" "kf-alb-tg" {
   target_type = "instance"
 
   health_check {
-    path     = "/"
+    path     = "/healthcheck"
     protocol = "HTTP"
-    port     = 80
+    interval = 40
+    timeout  = 30
   }
 }
 
