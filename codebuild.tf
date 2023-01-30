@@ -84,3 +84,90 @@ resource "aws_codebuild_project" "kf-codebuild" {
     aws_rds_cluster.kf-aurora-cluster-postgre
   ]
 }
+
+
+data "aws_iam_policy_document" "assume_by_codebuild" {
+  statement {
+    sid     = ""
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["codebuild.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "kf-codebuild-role" {
+  name               = "kf-codebuild-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_by_codebuild.json
+}
+
+data "aws_iam_policy_document" "kf-codebuild-role-policy-cw" {
+  statement {
+    sid    = "AllowCreateAndPutCWLogs"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "kf-codebuild-role-policy-cw" {
+  role   = aws_iam_role.kf-codebuild-role.name
+  policy = data.aws_iam_policy_document.kf-codebuild-role-policy-cw.json
+}
+
+data "aws_iam_policy_document" "kf-codebuild-role-policy-ecr" {
+  statement {
+    sid    = "AllowECR"
+    effect = "Allow"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetAuthorizationToken",
+      "ecr:PutImage",
+      "ecr:InitiateLayerUpload",
+      "ecr:CompleteLayerUpload",
+      "ecr:UploadLayerPart"
+    ]
+
+    //TODO: point to the specific repo arn only, but need to change "aws ecr get-login" in the appspec scripts to let them work
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "kf-codebuild-role-policy-ecr" {
+  role   = aws_iam_role.kf-codebuild-role.name
+  policy = data.aws_iam_policy_document.kf-codebuild-role-policy-ecr.json
+}
+
+data "aws_iam_policy_document" "kf-codebuild-role-policy-s3" {
+  statement {
+    sid    = "AllowS3"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+      "s3:GetBucketVersioning",
+      "s3:PutObjectAcl",
+      "s3:PutObject"
+    ]
+
+    resources = [
+      aws_s3_bucket.kf-cbld-bucket.arn,
+      "${aws_s3_bucket.kf-cbld-bucket.arn}/*",
+      aws_s3_bucket.kf-cdppln-bucket.arn,
+      "${aws_s3_bucket.kf-cdppln-bucket.arn}/*"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "kf-codebuild-role-policy-s3" {
+  role   = aws_iam_role.kf-codebuild-role.name
+  policy = data.aws_iam_policy_document.kf-codebuild-role-policy-s3.json
+}
