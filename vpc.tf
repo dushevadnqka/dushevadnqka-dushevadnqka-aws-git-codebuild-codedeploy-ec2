@@ -77,7 +77,7 @@ resource "aws_route" "public_internet_gateway" {
 
 resource "aws_route_table_association" "public" {
   count          = length(local.public_subnets)
-  subnet_id      = element(aws_subnet.public.*.id, count.index)
+  subnet_id      = element(aws_subnet.public[*].id, count.index)
   route_table_id = aws_default_route_table.public.id
 }
 
@@ -91,7 +91,7 @@ resource "aws_route_table" "private" {
 
 resource "aws_route_table_association" "private" {
   count          = length(local.private_subnets)
-  subnet_id      = element(aws_subnet.private.*.id, count.index)
+  subnet_id      = element(aws_subnet.private[*].id, count.index)
   route_table_id = aws_route_table.private.id
 }
 
@@ -105,7 +105,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "kf-nat" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public.0.id
+  subnet_id     = aws_subnet.public[0].id
 
   tags = {
     Name = "${var.service_name}-nat-gw"

@@ -5,7 +5,7 @@ resource "aws_lb" "kf-alb" {
   security_groups = [
     aws_security_group.alb.id
   ]
-  subnets = aws_subnet.public.*.id
+  subnets = aws_subnet.public[*].id
 
   tags = {
     Name = "${var.service_name}-service-alb"
