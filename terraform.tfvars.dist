@@ -14,4 +14,4 @@ docker_image_tag   = "latest"
 
 # Not required: it would be needed if your build hit the limit for pulling from Dockerhub
 dockerhub_username = ""
-dockerhub_pass     = ""
+dockerhub_pass     = "" //dockerhub password or token
