@@ -1,7 +1,6 @@
 # AWS Terraform Cloud infrastructure Project
 
-![Alt text](./graph.svg?sanitize=true)
-<img src="./graph.svg?sanitize=true">
+![Terraform Graph](./graph.svg?sanitize=true)
 
 ## Contains:
 - Basic VPC (Including public and private subnets, nat gateways, route tables, etc.): basically with public access to the ALB, and private connectivity (internal) between the services through the private subnets
