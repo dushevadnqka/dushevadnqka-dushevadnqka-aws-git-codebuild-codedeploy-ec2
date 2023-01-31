@@ -14,3 +14,46 @@ resource "aws_codedeploy_deployment_group" "kf-deployment" {
     value = "EC2-Instance-${var.service_name}-service"
   }
 }
+
+data "aws_iam_policy_document" "assume_by_codedeploy" {
+  statement {
+    sid     = ""
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["codedeploy.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "codedeploy" {
+  name               = "${var.service_name}-codedeploy"
+  assume_role_policy = data.aws_iam_policy_document.assume_by_codedeploy.json
+}
+
+data "aws_iam_policy_document" "codedeploy" {
+  statement {
+    sid    = "AllowLoadBalancingAndECSModifications"
+    effect = "Allow"
+
+    actions = [
+      "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DescribeRules",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:ModifyListener",
+      "elasticloadbalancing:ModifyRule",
+      "cloudwatch:DescribeAlarms",
+      "s3:*",
+      "ec2:*"
+    ]
+
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "codedeploy" {
+  role   = aws_iam_role.codedeploy.name
+  policy = data.aws_iam_policy_document.codedeploy.json
+}
